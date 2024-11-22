@@ -1,0 +1,152 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Inicio{% endblock %}
+{% block content %}
+<div class="m-5">
+<h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-house-down" viewBox="0 0 16 16">
+        <path d="M7.293 1.5a1 1 0 0 1 1.414 0L11 3.793V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v3.293l2.354 2.353a.5.5 0 0 1-.708.708L8 2.207l-5 5V13.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 2 13.5V8.207l-.646.647a.5.5 0 1 1-.708-.708z"/>
+        <path d="M12.5 9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7m.354 5.854 1.5-1.5a.5.5 0 0 0-.708-.707l-.646.646V10.5a.5.5 0 0 0-1 0v2.793l-.646-.646a.5.5 0 0 0-.708.707l1.5 1.5a.5.5 0 0 0 .708 0"/>
+    </svg>
+    Inmuebles
+</h2>
+{% if house_list %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Longitud geográfica del inmueble</th>
+            <th scope="col">Latitud geográfica del inmueble</th>
+            <th scope="col">Edad promedio de las viviendas en el área</th>
+            <th scope="col">Número total de habitaciones en el inmueble</th>
+            <th scope="col">Número total de dormitorios en el inmueble</th>
+            <th scope="col">Población en el área</th>
+            <th scope="col">Número de hogares en el área</th>
+            <th scope="col">Ingreso medio en el área</th>
+            <th scope="col">Valor medio del inmueble</th>
+            <th scope="col">Proximidad al océano</th>
+            <th scope="col">
+                <button class="btn btn-outline-success text-light border-light-subtle" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteId(window.location.href='{% url 'houses:create' %}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="57" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                    </svg>
+                </button>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for house in house_list %}
+        <tr>
+            <td>{{ house.longitude }}</td>
+            <td>{{ house.latitude }}</td>
+            <td>{{ house.housing_median_age }}</td>
+            <td>{{ house.total_rooms }}</td>
+            <td>{{ house.total_bedrooms }}</td>
+            <td>{{ house.population }}</td>
+            <td>{{ house.households }}</td>
+            <td>{{ house.median_income }}</td>
+            <td>{{ house.median_house_value }}</td>
+            <td>{{ house.ocean_proximity }}</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-success text-light border-light-subtle" onclick="window.location.href='{% url 'houses:update' house.id %}'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger text-light border-light-subtle" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteId({{ house.id }})">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<nav class="mt-5" aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link text-light" href="?page=1">&laquo;</a></li>
+            <li class="page-item"><a class="page-link text-light" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+        {% else %}
+            <li class="page-item disabled"><a class="page-link text-light" href="#">&laquo;</a></li>
+            <li class="page-item disabled"><a class="page-link text-light" href="#">Anterior</a></li>
+        {% endif %}
+
+        {% for i in paginator.page_range %}
+            {% if i >= page_obj.number|add:-5 and i <= page_obj.number|add:5 %}
+                <li class="page-item {% if page_obj.number == i %}active{% endif %}">
+                    <a class="page-link text-light {% if page_obj.number == i %}bg-danger border-danger{% endif %}" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link text-light" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+            <li class="page-item"><a class="page-link text-light" href="?page={{ paginator.num_pages }}">&raquo;</a></li>
+        {% else %}
+            <li class="page-item disabled"><a class="page-link text-light" href="#">Siguiente</a></li>
+            <li class="page-item disabled"><a class="page-link text-light" href="#">&raquo;</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+
+</div>
+{% else %}
+    <p>No hay inmuebles disponibles.</p>
+{% endif %}
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este inmueble?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+let csrfToken = document.querySelector('[name=csrf-token]').content;
+let deleteHouseId = null;
+function setDeleteId(houseId) {
+    deleteHouseId = houseId;
+}
+document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+    if (deleteHouseId !== null) {
+        fetch(`/houses/delete/${deleteHouseId}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                $('#deleteModal').modal('hide');
+                window.location.reload();
+            } else {
+                alert("Error al eliminar el inmueble.");
+            }
+        })
+        .catch(error => {
+            console.error("Error al hacer la solicitud:", error);
+            alert("Hubo un problema al intentar eliminar el inmueble.");
+        });
+    }
+});
+</script>
+{% endblock %}

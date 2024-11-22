@@ -1,0 +1,114 @@
+<div class="row mt-3 mb-5">
+    <div class="col-md-12">
+        <div class="mt-3">
+            <h4>Predicción del Valor Medio de la casa</h4>
+            <p>Por defectos se cargan los valores medios de cada parámetro.</p>
+        </div>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.01" class="form-control" id="longitude" name="longitude" value="{{ averages.avg_longitude }}" required>
+                        <label for="longitude">Longitud</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.01" class="form-control" id="latitude" name="latitude" value="{{ averages.avg_latitude }}" required>
+                        <label for="latitude">Latitud</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.01" class="form-control" id="housing_median_age" name="housing_median_age" value="{{ averages.avg_housing_median_age }}" required>
+                        <label for="housing_median_age">Edad media de la vivienda</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.01" class="form-control" id="total_rooms" name="total_rooms" value="{{ averages.avg_total_rooms }}" required>
+                        <label for="total_rooms">Total de habitaciones</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.01" class="form-control" id="total_bedrooms" name="total_bedrooms" value="{{ averages.avg_total_bedrooms }}" required>
+                        <label for="total_bedrooms">Total de dormitorios</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.01" class="form-control" id="population" name="population" value="{{ averages.avg_population }}" required>
+                        <label for="population">Población</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.01" class="form-control" id="households" name="households" value="{{ averages.avg_households }}" required>
+                        <label for="households">Hogares</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input type="number" step="0.0001" class="form-control" id="median_income" name="median_income" value="{{ averages.avg_median_income }}" required>
+                        <label for="median_income">Ingreso medio</label>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-danger btn-block mt-3" onclick="submitPredictionForm()">Predecir Valor Medio</button>
+        </form>
+        <p id="prediction-message" style="display:none;">
+            Predicción del valor medio de la casa para los datos ingresados: <strong id="prediction-value"></strong>
+        </p>
+    </div>
+</div>
+
+<script>
+    function submitPredictionForm() {
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+      // Obtén los valores del formulario
+      const data = {
+          longitude: document.getElementById("longitude").value,
+          latitude: document.getElementById("latitude").value,
+          housing_median_age: document.getElementById("housing_median_age").value,
+          total_rooms: document.getElementById("total_rooms").value,
+          total_bedrooms: document.getElementById("total_bedrooms").value,
+          population: document.getElementById("population").value,
+          households: document.getElementById("households").value,
+          median_income: document.getElementById("median_income").value
+      };
+  
+      // Verifica los datos antes de enviarlos
+      console.log("Datos enviados:", data);
+  
+      // Realiza la solicitud POST
+      fetch('/prediccion/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',  // Especifica que los datos son JSON
+              'X-CSRFToken': csrfToken
+          },
+          body: JSON.stringify(data)  // Convierte los datos a formato JSON
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.prediction) {
+              //alert("Predicción: " + data.prediction);
+              // Actualiza el valor de la predicción
+              $("#prediction-value").text(data.prediction);
+              // Muestra el mensaje de predicción
+              $("#prediction-message").show();
+          } else {
+              alert("Error: " + data.message);
+          }
+      })
+      .catch(error => {
+          console.error("Error en la solicitud:", error);
+          alert("Hubo un problema con la solicitud.");
+      });
+    }
+</script>
