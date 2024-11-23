@@ -170,7 +170,10 @@
         <ul class="navbar-nav">
           {% if not request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="btn btn-outline-danger" href="{% url 'login' %}">Acceder</a>
+              <a class="btn btn-outline-danger me-1" href="{% url 'login' %}">Acceder</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-outline-danger" href="{% url 'signup' %}">Registro</a>
             </li>
           {% else %}
             <li class="nav-item">

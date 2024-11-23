@@ -76,34 +76,8 @@ class HousePricePredictionView(View):
         except Exception as e:
             return JsonResponse({'message': f'Error al realizar la predicción: {e}'}, status=500)
 
-class IncomePredictionView(View):
-    def post(self, request, *args, **kwargs):
-        # Cargar el modelo de ingreso
-        model_path = os.path.join(settings.BASE_DIR, 'houses', 'management', 'commands', 'median_income_model.pkl')
-        try:
-            with open(model_path, 'rb') as file:
-                model = pickle.load(file)
-        except FileNotFoundError:
-            return JsonResponse({'message': 'El archivo median_income_model.pkl no se encontró.'}, status=404)
 
-        try:
-            # Cargar los datos del formulario
-            data = json.loads(request.body)
-            example_data = [
-                float(data['population']),
-                float(data['households']),
-                float(data['total_rooms']),
-                float(data['total_bedrooms'])
-            ]
 
-            # Realizar la predicción
-            prediction = model.predict([example_data])[0]
-            return JsonResponse({'prediction': round(prediction, 2)})
-
-        except json.JSONDecodeError:
-            return JsonResponse({'message': "Error: El cuerpo de la solicitud no es un JSON válido."}, status=400)
-        except Exception as e:
-            return JsonResponse({'message': f"Error al realizar la predicción: {e}"}, status=500)
 
 class SamplePageView(TemplateView):
     template_name = "core/sample.html"
